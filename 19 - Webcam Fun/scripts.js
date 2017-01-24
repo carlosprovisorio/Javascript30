@@ -24,13 +24,33 @@ function paintToCanvas() {
 
   return setInterval(() => {
     ctx.drawImage(video, 0, 0, width, height);
+    let pixels = ctx.getImageData(0, 0, width, height);
+    pixels = redEffect(pixels);
+    ctx.putImageData(pixels, 0, 0);
+
   }, 16);
 }
 
   function takePhoto() {
     snap.currentTime = 0;
     snap.play();
+
+    const data = canvas.toDataURL('image/jpeg');
+    const link = document.createElement('a');
+    link.href = data;
+    link.setAttribute('download', 'carlos');
+    link.innerHTML = `<img src="${data}" alt="Handsome" />`;
+    strip.insertBefore(link, strip.firstChild);
   }
+
+function redEffect(pixels) {
+  for (let i = 0; i < pixels.data.length; i+=4) {
+    pixels.data[i + 0] = pixels.data[i + 0] + 90; // red
+    pixels.data[i + 1] = pixels.data[i + 1] - 30; // Green
+    pixels.data[i + 2] = pixels.data[i + 2] * 0.7; //Blue 
+  }
+  return pixels;
+}
 
 getVideo();
 
